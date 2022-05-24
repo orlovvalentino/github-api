@@ -1,6 +1,10 @@
 <template>
   <div>
-    <input type="text" v-model="search" v-on:input="debouncedHandler">
+    <form>
+      <label for="search">Search
+        <input name="search" id=search type="text" v-model="search" v-on:input="debouncedHandler">
+      </label>
+    </form>
     <ul>
       <li v-for="user in users" :key="user.id" ref="users">
         <router-link :to='{name:"user", params:{login:user.login}}'>
@@ -13,8 +17,8 @@
 </template>
 
 <script>
-import fetchData from '../api/list';
 import { debounce } from 'lodash';
+import fetchData from '../api/list';
 
 export default {
   name: 'UsersList',
@@ -37,9 +41,8 @@ export default {
       return new Promise(() => {
         fetchData.fetchUsers({
           since: this.since,
-          per_page: this.perPage
+          per_page: this.perPage,
         })
-          .then((response) => response.json())
           .then((data) => {
             if (data.length < this.perPage) {
               this.thisIsTheEnd = true;
@@ -52,15 +55,15 @@ export default {
       });
     },
     addIntersectionObserver() {
-      if (this.$refs.hasOwnProperty('users') && this.$refs.users.length > 0) {
+      if (Object.prototype.hasOwnProperty.call(this.$refs, 'users') && this.$refs.users.length > 0) {
         const lastElementInList = this.$refs.users[this.$refs.users.length - 1];
-        const observer = new IntersectionObserver(entries => {
+        const observer = new IntersectionObserver((entries) => {
           const firstEntry = entries[0];
           if (firstEntry.isIntersecting) {
             if (this.total_count > this.users.length && this.search.length > 0) {
               this.getSearchUsers();
             }
-            if(this.search.length === 0 ){
+            if (this.search.length === 0) {
               this.getList();
             }
             observer.unobserve(firstEntry.target);
@@ -73,15 +76,17 @@ export default {
       return new Promise(() => {
         fetchData.searchUser(this.search, {
           per_page: this.perPage,
-          page: this.page
+          page: this.page,
         })
           .then((data) => {
             if (data.items.length === 0) {
-              return this.thisIsTheEnd = true;
+              this.thisIsTheEnd = true;
+              return;
             }
-            const filtered = data.items.filter((item1) => !this.users.find(item2 => item1.id === item2.id));
+            const filtered = data.items
+              .filter((item1) => !this.users.find((item2) => item1.id === item2.id));
             this.users.push(...filtered);
-            this.page++;
+            this.page += 1;
             this.total_count = data.total_count;
           });
       });
@@ -99,10 +104,10 @@ export default {
         this.total_count = 0;
         this.since = 0;
       }
-    }
+    },
   },
   created() {
-    this.debouncedHandler = debounce(event => {
+    this.debouncedHandler = debounce(() => {
       if (this.search.length > 0) {
         this.getSearchUsers();
       }

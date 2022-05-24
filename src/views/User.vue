@@ -39,7 +39,7 @@ export default {
       user: true,
       name: null,
       location: null,
-      repositories:[]
+      repositories: [],
     };
   },
   methods: {
@@ -52,7 +52,7 @@ export default {
           });
       });
     },
-    getRepositories(){
+    getRepositories() {
       return new Promise(() => {
         fetchData.fetchRepositories(this.$route.params.login)
           .then((response) => response.json())
@@ -60,11 +60,11 @@ export default {
             this.repositories = data;
           });
       });
-    }
+    },
   },
   mounted() {
     this.getUser();
     this.getRepositories();
-  }
+  },
 };
 </script>
