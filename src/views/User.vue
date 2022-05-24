@@ -52,7 +52,6 @@ export default {
     getUser() {
       return new Promise(() => {
         fetchData.fetchUser(this.$route.params.login)
-          .then((response) => response.json())
           .then((data) => {
             this.user = data;
           });
@@ -61,7 +60,6 @@ export default {
     getRepositories() {
       return new Promise(() => {
         fetchData.fetchRepositories(this.$route.params.login)
-          .then((response) => response.json())
           .then((data) => {
             this.repositories = data;
           });

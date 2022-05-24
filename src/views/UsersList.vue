@@ -46,6 +46,24 @@ export default {
     };
   },
   methods: {
+    addIntersectionObserver() {
+      if (Object.prototype.hasOwnProperty.call(this.$refs, 'users') && this.$refs.users.length > 0) {
+        const lastElementInList = this.$refs.users[this.$refs.users.length - 1];
+        const observer = new IntersectionObserver((entries) => {
+          const firstEntry = entries[0];
+          if (firstEntry.isIntersecting) {
+            if (this.total_count > this.users.length && this.search.length > 0) {
+              this.getSearchUsers();
+            }
+            if (this.search.length === 0) {
+              this.getList();
+            }
+            observer.unobserve(firstEntry.target);
+          }
+        });
+        observer.observe(lastElementInList);
+      }
+    },
     getList() {
       if (this.since === 0) {
         this.users = [];
@@ -65,24 +83,6 @@ export default {
             this.total_count = 0;
           });
       });
-    },
-    addIntersectionObserver() {
-      if (Object.prototype.hasOwnProperty.call(this.$refs, 'users') && this.$refs.users.length > 0) {
-        const lastElementInList = this.$refs.users[this.$refs.users.length - 1];
-        const observer = new IntersectionObserver((entries) => {
-          const firstEntry = entries[0];
-          if (firstEntry.isIntersecting) {
-            if (this.total_count > this.users.length && this.search.length > 0) {
-              this.getSearchUsers();
-            }
-            if (this.search.length === 0) {
-              this.getList();
-            }
-            observer.unobserve(firstEntry.target);
-          }
-        });
-        observer.observe(lastElementInList);
-      }
     },
     getSearchUsers() {
       return new Promise(() => {
