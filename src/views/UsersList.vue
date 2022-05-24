@@ -1,18 +1,30 @@
 <template>
-  <div>
-    <form>
-      <label for="search">Search
-        <input name="search" id=search type="text" v-model="search" v-on:input="debouncedHandler">
-      </label>
-    </form>
-    <ul>
-      <li v-for="user in users" :key="user.id" ref="users">
-        <router-link :to='{name:"user", params:{login:user.login}}'>
-          <img :src="user.avatar_url" alt="user.login" width="30" height="30"/>
-          {{ user.login }}
-        </router-link>
-      </li>
-    </ul>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm">
+        <form>
+          <div class="form-group">
+            <label for="search">Search
+              <input class="form-control form-control-lg"
+                     name="search"
+                     id=search type="text" v-model="search" v-on:input="debouncedHandler">
+            </label>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm">
+        <ul class="list-group">
+          <li v-for="user in users" :key="user.id" ref="users" class="list-group-item">
+            <router-link :to='{name:"user", params:{login:user.login}}'>
+              <img :src="user.avatar_url" alt="user.login" width="30" height="30"/>
+              {{ user.login }}
+            </router-link>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </template>
 
