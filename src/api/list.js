@@ -7,8 +7,10 @@ const fetchUser = (login)=>{
 const fetchRepositories = (login)=>{
   return fetch(`https://api.github.com/users/${login}/repos`);
 }
+const searchUser = (q,params)=> fetch(`https://api.github.com/search/users?q=${q}&${new URLSearchParams(params  )}`).then((response) => response.json());
 export default {
   fetchUsers,
   fetchUser,
   fetchRepositories,
+  searchUser
 }
