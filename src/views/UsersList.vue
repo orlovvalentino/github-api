@@ -65,56 +65,48 @@ export default {
       }
     },
     getList() {
-      if (this.since === 0) {
-        this.users = [];
-      }
-      return new Promise(() => {
-        fetchData.fetchUsers({
-          since: this.since,
-          per_page: this.perPage,
-        })
-          .then((data) => {
-            if (data.length < this.perPage) {
-              this.thisIsTheEnd = true;
-            }
-            this.users.push(...data);
-            this.since = data[data.length - 1].id;
-            this.page = 1;
-            this.total_count = 0;
-          });
-      });
+      fetchData.fetchUsers({
+        since: this.since,
+        per_page: this.perPage,
+      })
+        .then((data) => {
+          if (data.length < this.perPage) {
+            this.thisIsTheEnd = true;
+          }
+          this.users.push(...data);
+          this.since = data[data.length - 1].id;
+        });
     },
     getSearchUsers() {
-      return new Promise(() => {
-        fetchData.searchUser(this.search, {
-          per_page: this.perPage,
-          page: this.page,
-        })
-          .then((data) => {
-            if (data.items.length === 0) {
-              this.thisIsTheEnd = true;
-              return;
-            }
-            const filtered = data.items
-              .filter((item1) => !this.users.find((item2) => item1.id === item2.id));
-            this.users.push(...filtered);
-            this.page += 1;
-            this.total_count = data.total_count;
-          });
-      });
+      fetchData.searchUser(this.search, {
+        per_page: this.perPage,
+        page: this.page,
+      })
+        .then((data) => {
+          if (data.items.length === 0) {
+            this.thisIsTheEnd = true;
+            return;
+          }
+          const filtered = data.items
+            .filter((item1) => !this.users.find((item2) => item1.id === item2.id));
+          this.users.push(...filtered);
+          this.page += 1;
+          this.total_count = data.total_count;
+        });
+    },
+    resetData() {
+      this.users = [];
+      this.page = 1;
+      this.total_count = 0;
+      this.since = 0;
+      this.thisIsTheEnd = false;
     },
   },
   watch: {
-    search(newValue, oldValue) {
+    search(newValue) {
+      this.resetData();
       if (newValue.length === 0) {
-        this.thisIsTheEnd = false;
         this.getList();
-      }
-      if (newValue !== oldValue) {
-        this.users = [];
-        this.page = 1;
-        this.total_count = 0;
-        this.since = 0;
       }
     },
   },
